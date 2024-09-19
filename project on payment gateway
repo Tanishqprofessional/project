@@ -1,0 +1,97 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <fstream>
+
+using namespace std;
+
+struct User {
+    string username;
+    string password; // In a real app, store hashed passwords
+};
+
+struct Transaction {
+    string username;
+    double amount;
+    string status; // e.g., "Success", "Failed"
+};
+
+vector<User> users;
+vector<Transaction> transactions;
+
+void registerUser(const string& username, const string& password) {
+    users.push_back({username, password});
+    cout << "User registered successfully!" << endl;
+}
+
+bool loginUser(const string& username, const string& password) {
+    for (const auto& user : users) {
+        if (user.username == username && user.password == password) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void processPayment(const string& username, double amount) {
+    // Simulate payment processing
+    Transaction transaction = {username, amount, "Success"};
+    transactions.push_back(transaction);
+    cout << "Payment of Rs." << amount << " processed successfully!" << endl;
+}
+
+void logTransactions() {
+    ofstream file("transactions.txt", ios::app);
+    for (const auto& transaction : transactions) {
+        file << transaction.username << " " << transaction.amount << " " << transaction.status << endl;
+    }
+    file.close();
+}
+
+int main() {
+    int choice;
+    string username, password;
+
+    do {
+        cout << "1. Register\n2. Login\n3. Process Payment\n4. Exit\n";
+        cout << "Choose an option: ";
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter username: ";
+                cin >> username;
+                cout << "Enter password: ";
+                cin >> password;
+                registerUser(username, password);
+                break;
+            case 2:
+                cout << "Enter username: ";
+                cin >> username;
+                cout << "Enter password: ";
+                cin >> password;
+                if (loginUser(username, password)) {
+                    cout << "Login successful!" << endl;
+                } else {
+                    cout << "Invalid credentials." << endl;
+                }
+                break;
+            case 3:
+                cout << "Enter username: ";
+                cin >> username;
+                cout << "Enter amount: ";
+                double amount;
+                cin >> amount;
+                processPayment(username, amount);
+                logTransactions();
+                break;
+            case 4:
+                cout << "Exiting..." << endl;
+                break;
+            default:
+                cout << "Invalid option." << endl;
+        }
+    } while (choice != 4);
+
+    return 0;
+}
